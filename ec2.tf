@@ -22,7 +22,7 @@ resource "aws_autoscaling_group" "wordpress_asg" {
   min_size            = 1
   max_size            = 10
 
-  target_group_arns = [aws_lb_target_group.app.arn]
+  #target_group_arns = [aws_lb_target_group.app.arn]
 
   tag {
     key                 = "Name"
@@ -32,9 +32,9 @@ resource "aws_autoscaling_group" "wordpress_asg" {
 }
 
 resource "aws_autoscaling_policy" "app_cpu_tracking" {
-  name                      = "cpu-utilization-tracking"
-  policy_type               = "TargetTrackingScaling"
-  autoscaling_group_name    = aws_autoscaling_group.app.name
+  name        = "cpu-utilization-tracking"
+  policy_type = "TargetTrackingScaling"
+  #autoscaling_group_name    = aws_autoscaling_group.app.name
   estimated_instance_warmup = 300
 
   target_tracking_configuration {
@@ -42,7 +42,7 @@ resource "aws_autoscaling_policy" "app_cpu_tracking" {
       predefined_metric_type = "ASGAverageCPUUtilization"
     }
 
-    target_value = 50.0
+    target_value = 70.0
   }
 }
 
