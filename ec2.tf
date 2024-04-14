@@ -22,7 +22,7 @@ resource "aws_autoscaling_group" "wordpress_asg" {
   min_size            = 1
   max_size            = 10
 
-  #target_group_arns = [aws_lb_target_group.app.arn]
+  #target_group_arns = [aws_lb_target_group.wordpress.arn]
 
   tag {
     key                 = "Name"
