@@ -32,9 +32,9 @@ resource "aws_autoscaling_group" "wordpress_asg" {
 }
 
 resource "aws_autoscaling_policy" "app_cpu_tracking" {
-  name        = "cpu-utilization-tracking"
-  policy_type = "TargetTrackingScaling"
-  #autoscaling_group_name    = aws_autoscaling_group.app.name
+  name                      = "cpu-utilization-tracking"
+  policy_type               = "TargetTrackingScaling"
+  autoscaling_group_name    = aws_autoscaling_group.wordpress_asg.name
   estimated_instance_warmup = 300
 
   target_tracking_configuration {
@@ -71,12 +71,12 @@ resource "aws_lb_target_group" "wordpress" {
 }
 
 resource "aws_lb_listener" "wordpress" {
-  load_balancer_arn = aws_lb.app_lb.arn
+  load_balancer_arn = aws_lb.wordpress_lb.arn
   port              = 80
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.app.arn
+    target_group_arn = aws_lb_target_group.wordpress.arn
   }
 }
