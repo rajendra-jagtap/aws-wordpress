@@ -1,6 +1,6 @@
 variable "aws_region" {
   description = "AWS region to deploy resources into"
-  default     = "us-east-1"
+  default     = "ap-southeast-1"
 }
 
 variable "vpc_name" {
@@ -14,7 +14,7 @@ variable "vpc_cidr" {
 }
 
 variable "azs" {
-  description = "Availability zones to use"
+  description = "Availability Zones"
   type        = list(string)
 }
 
@@ -26,4 +26,19 @@ variable "public_subnets" {
 variable "private_subnets" {
   description = "CIDR blocks for the private subnets"
   type        = list(string)
+}
+
+variable "instance_type" {
+  description = "Instance Type of Wordpress Instance"
+  type        = string
+}
+
+variable "ami_id" {
+  description = "Base AMI for Wordpress Instance"
+  type        = string
+}
+
+variable "key_name" {
+  description = "Keypair for Wordpress Instance"
+  type        = string
 }
