@@ -14,7 +14,7 @@ resource "aws_launch_template" "wordpress" {
 
 resource "aws_autoscaling_group" "wordpress_asg" {
   launch_template {
-    id      = aws_launch_template.app.id
+    id      = aws_launch_template.wordpress.id
     version = "$Latest"
   }
 
