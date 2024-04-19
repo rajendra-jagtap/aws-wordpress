@@ -21,7 +21,7 @@ pipeline {
                 //}
                 sh '/tmp/terraform init -input=false'
                 //sh 'terraform workspace select ${environment}'
-                sh "/tmp/terraform plan -input=false -out tfplan --var-file=environments/terraform.tfvars"
+                sh "/tmp/terraform plan -input=false -out tfplan --var-file=terraform.tfvars"
                 sh '/tmp/terraform show -no-color tfplan > tfplan.txt'
             }
         }
