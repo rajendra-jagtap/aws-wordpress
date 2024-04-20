@@ -1,9 +1,15 @@
 pipeline {
     agent any
 
+    environment {
+        DB_PASSWORD = ''
+        WP_ADMIN_PASSWORD = ''
+    }
+
     parameters {
         booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
-        choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Select whether to apply or destroy the infrastructure.')
+        password(name: 'DB_PASSWORD', defaultValue: '', description: 'Database password')
+        password(name: 'WP_ADMIN_PASSWORD', defaultValue: '', description: 'WordPress Admin password')
     }
 
     stages {
@@ -36,18 +42,6 @@ pipeline {
             }
         }
 
-        //stage('Apply or Destroy') {
-        //    steps {
-        //        script {
-        //            if (params.ACTION == 'apply') {
-        //                sh "terraform apply -input=false tfplan"
-        //            } else if (params.ACTION == 'destroy') {
-        //                sh "terraform destroy -auto-approve"
-        //            }
-        //        }
-        //    }
-        //}
-
         stage('Apply Terraform') {
             steps {
                 sh 'terraform apply -auto-approve'
@@ -60,9 +54,14 @@ pipeline {
         stage('Configure with Ansible') {
             steps {
                 writeFile(file: 'ansible_inventory', text: "[wordpress_servers]\n${env.INSTANCE_IP} ansible_user=ec2-user ansible_ssh_private_key_file=/tmp/singapore-keypair.pem")
+                def extraVars = [
+                    'db_password': "${env.DB_PASSWORD}",
+                    'wp_admin_password': "${env.WP_ADMIN_PASSWORD}"
+                ]
                 ansiblePlaybook(
                     playbook: 'ansible/execute_python_script.yml',
-                    inventory: 'ansible_inventory'
+                    inventory: 'ansible_inventory',
+                    extras: "--extra-vars '${extraVars.collect{key, value -> "$key=$value"}.join(' ')}'"
                 )
             }
         }
