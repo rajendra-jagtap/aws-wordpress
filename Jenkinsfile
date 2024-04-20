@@ -53,18 +53,20 @@ pipeline {
 
         stage('Configure with Ansible') {
             steps {
-                writeFile(file: 'ansible_inventory', text: "[wordpress_servers]\n${env.INSTANCE_IP} ansible_user=ec2-user ansible_ssh_private_key_file=/tmp/singapore-keypair.pem")
-                def extraVars = [
-                    'db_password': "${env.DB_PASSWORD}",
-                    'wp_admin_password': "${env.WP_ADMIN_PASSWORD}"
-                ]
-                def extraVarsString = extraVars.collect { key, value -> "$key='$value'" }.join(' ')
-                ansiblePlaybook(
-                    playbook: 'ansible/execute_python_script.yml',
-                    inventory: 'ansible_inventory',
-                    extras: "--extra-vars '${extraVarsString}'"
-                    //extras: "--extra-vars '${extraVars.collect{key, value -> "$key=$value"}.join(' ')}'"
-                )
+                script {
+                    def extraVars = [
+                        db_password: env.DB_PASSWORD,
+                        wp_admin_password: env.WP_ADMIN_PASSWORD
+                    ]
+                    def extraVarsString = extraVars.collect { key, value -> "$key='$value'" }.join(' ')
+
+                    writeFile(file: 'ansible_inventory', text: "[wordpress_servers]\n${env.INSTANCE_IP} ansible_user=ec2-user ansible_ssh_private_key_file=/tmp/singapore-keypair.pem")
+                    ansiblePlaybook(
+                        playbook: 'ansible/execute_python_script.yml',
+                        inventory: 'ansible_inventory',
+                        extras: "--extra-vars '${extraVarsString}'"
+                    )
+                }
             }
         }
     }
@@ -74,10 +76,10 @@ pipeline {
             archiveArtifacts artifacts: 'tfplan.txt'
         }
         success {
-            echo "Operation ${params.ACTION} completed successfully!"
+            echo "Wordpress deployment completed successfully!"
         }
         failure {
-            echo "Operation ${params.ACTION} failed."
+            echo "Wordpress deployment failed."
         }
     }
 }
