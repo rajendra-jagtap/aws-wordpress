@@ -2,6 +2,8 @@
 ---
 - hosts: all
   become: yes
+  vars:
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
   tasks:
     - name: Transfer Python script to remote server
       copy:
