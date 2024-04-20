@@ -12,7 +12,7 @@ This project automates the deployment of a WordPress site on AWS using Jenkins, 
 ## Requirements
 
 - AWS Account with access to EC2, IAM, VPC, and other necessary services.
-- Jenkins server with plugins for Ansible, Git, and handling AWS credentials.
+- Jenkins server with plugins for Ansible, Git, and Stage Pipeline.
 - Ansible installed on the Jenkins server or another control machine.
 - Python 3.x installed on the target AWS instances.
 - Terraform installed for infrastructure provisioning.
@@ -20,12 +20,11 @@ This project automates the deployment of a WordPress site on AWS using Jenkins, 
 ## Setup Instructions
 
 1. **Terraform Setup**:
-   - Use Terraform to create the required AWS infrastructure. Adjust the Terraform scripts according to your specific AWS setup.
+   - Use Terraform to create the required AWS infrastructure. Adjust the Terraform scripts according to specific AWS setup.
    - Ensure the Terraform state is securely managed and not exposed.
 
 2. **Jenkins Configuration**:
-   - Install necessary plugins (Ansible plugin, Git plugin, Terraform plugin if available).
-   - Set up credentials for AWS and other sensitive information using Jenkins credential manager.
+   - Install necessary plugins (Ansible plugin, Git plugin, Terraform plugin, Stage Pipeline.
 
 3. **Ansible Playbook**:
    - Use the provided Ansible playbook to configure the AWS environment and deploy WordPress.
