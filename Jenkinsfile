@@ -2,26 +2,15 @@ pipeline {
     agent any
 
     parameters {
-    //    string(name: 'environment', defaultValue: 'default', description: 'Workspace/environment file to use for deployment')
-    //    string(name: 'version', defaultValue: '', description: 'Version variable to pass to Terraform')
         booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
-    //}
-    //
-    //environment {
-    //    AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
-    //    AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-    //    TF_IN_AUTOMATION      = '1'
+        choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Select whether to apply or destroy the infrastructure.')
     }
 
     stages {
-        stage('Plan') {
+        stage('Init and Plan') {
             steps {
-                //script {
-                //    currentBuild.displayName = params.version
-                //}
-                sh 'terraform init -input=false'
-                //sh 'terraform workspace select ${environment}'
-                sh "terraform plan -input=false -out tfplan --var-file=terraform.tfvars"
+                sh 'terraform init -input=false -backend-config="bucket=rajendra-terraform" -backend-config="key=wordpress.tfstate" -backend-config="region=ap-south-1"'
+                sh "terraform plan -input=false -out=tfplan --var-file=terraform.tfvars"
                 sh 'terraform show -no-color tfplan > tfplan.txt'
             }
         }
@@ -36,16 +25,21 @@ pipeline {
             steps {
                 script {
                     def plan = readFile 'tfplan.txt'
-                    input message: "Do you want to apply the plan?",
-                        parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
+                    input message: "Review the plan and choose an action",
+                        parameters: [text(name: 'Plan', description: 'Please review the plan:', defaultValue: plan)]
                 }
             }
         }
 
-        stage('Apply') {
+        stage('Apply or Destroy') {
             steps {
-                //sh "terraform apply -input=false tfplan"
-                sh "terraform destroy --auto-approve"
+                script {
+                    if (params.ACTION == 'apply') {
+                        sh "terraform apply -input=false tfplan"
+                    } else if (params.ACTION == 'destroy') {
+                        sh "terraform destroy -auto-approve"
+                    }
+                }
             }
         }
     }
@@ -53,6 +47,12 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'tfplan.txt'
+        }
+        success {
+            echo "Operation ${params.ACTION} completed successfully!"
+        }
+        failure {
+            echo "Operation ${params.ACTION} failed."
         }
     }
 }
