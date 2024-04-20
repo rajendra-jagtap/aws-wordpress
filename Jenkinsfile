@@ -58,10 +58,12 @@ pipeline {
                     'db_password': "${env.DB_PASSWORD}",
                     'wp_admin_password': "${env.WP_ADMIN_PASSWORD}"
                 ]
+                def extraVarsString = extraVars.collect { key, value -> "$key='$value'" }.join(' ')
                 ansiblePlaybook(
                     playbook: 'ansible/execute_python_script.yml',
                     inventory: 'ansible_inventory',
-                    extras: "--extra-vars '${extraVars.collect{key, value -> "$key=$value"}.join(' ')}'"
+                    extras: "--extra-vars '${extraVarsString}'"
+                    //extras: "--extra-vars '${extraVars.collect{key, value -> "$key=$value"}.join(' ')}'"
                 )
             }
         }
