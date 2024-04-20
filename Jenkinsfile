@@ -7,9 +7,14 @@ pipeline {
     }
 
     stages {
-        stage('Init and Plan') {
+        stage('Init') {
             steps {
                 sh 'terraform init -input=false -backend-config="bucket=rajendra-terraform" -backend-config="key=wordpress.tfstate" -backend-config="region=ap-south-1"'
+            }
+        }
+
+        stage('Plan') {
+            steps {
                 sh "terraform plan -input=false -out=tfplan --var-file=terraform.tfvars"
                 sh 'terraform show -no-color tfplan > tfplan.txt'
             }
