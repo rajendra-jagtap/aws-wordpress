@@ -7,7 +7,7 @@
   tasks:
     - name: Transfer Python script to remote server
       copy:
-        src: ./scripts/install_wordpress.py
+        src: "{{ playbook_dir }}/scripts/install_wordpress.py"
         dest: /tmp/install_wordpress.py
         mode: '0755'
 
