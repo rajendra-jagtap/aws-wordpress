@@ -50,7 +50,7 @@ pipeline {
 
         stage('Apply Terraform') {
             steps {
-                sh 'terraform apply -auto-approve'
+                sh 'terraform destroy -auto-approve'
                 script {
                     env.INSTANCE_IP = sh(script: "terraform output -raw instance_ip", returnStdout: true).trim()
                 }
