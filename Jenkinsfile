@@ -59,7 +59,7 @@ pipeline {
 
         stage('Configure with Ansible') {
             steps {
-                writeFile(file: 'ansible_inventory', text: "[wordpress_servers]\n${env.INSTANCE_IP} ansible_user=ec2-user ansible_ssh_private_key_file=/root/rajendra/singapore-keypair.pem")
+                writeFile(file: 'ansible_inventory', text: "[wordpress_servers]\n${env.INSTANCE_IP} ansible_user=ec2-user ansible_ssh_private_key_file=/tmp/singapore-keypair.pem")
                 ansiblePlaybook(
                     playbook: 'ansible/execute_python_script.yml',
                     inventory: 'ansible_inventory'
