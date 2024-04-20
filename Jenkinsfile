@@ -19,10 +19,10 @@ pipeline {
                 //script {
                 //    currentBuild.displayName = params.version
                 //}
-                sh '/tmp/terraform init -input=false'
+                sh 'terraform init -input=false'
                 //sh 'terraform workspace select ${environment}'
-                sh "/tmp/terraform plan -input=false -out tfplan --var-file=terraform.tfvars"
-                sh '/tmp/terraform show -no-color tfplan > tfplan.txt'
+                sh "terraform plan -input=false -out tfplan --var-file=terraform.tfvars"
+                sh 'terraform show -no-color tfplan > tfplan.txt'
             }
         }
 
@@ -44,7 +44,7 @@ pipeline {
 
         stage('Apply') {
             steps {
-                sh "/tmp/terraform apply -input=false tfplan"
+                sh "terraform apply -input=false tfplan"
             }
         }
     }
