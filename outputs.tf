@@ -1,15 +1,4 @@
-#output "ecs_cluster_id" {
-#  value = module.ecs_fargate.cluster_id
-#}
-#
-#output "rds_address" {
-#  value = module.rds.db_instance_address
-#}
-#
-#output "alb_dns_name" {
-#  value = module.alb.lb_dns_name
-#}
-#
-#output "cloudfront_distribution_id" {
-#  value = module.cloudfront.distribution_id
-#}
+output "instance_ip" {
+  value = aws_instance.web.public_ip
+  description = "The public IP address of the EC2 instance."
+}

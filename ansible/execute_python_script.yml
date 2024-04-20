@@ -1,0 +1,13 @@
+# Filename: execute_python_script.yml
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Transfer Python script to remote server
+      copy:
+        src: ./scripts/install_wordpress.py
+        dest: /tmp/install_wordpress.py
+        mode: '0755'
+
+    - name: Execute Python script to install WordPress
+      command: python3 /tmp/install_wordpress.py

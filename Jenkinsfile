@@ -36,15 +36,34 @@ pipeline {
             }
         }
 
-        stage('Apply or Destroy') {
+        //stage('Apply or Destroy') {
+        //    steps {
+        //        script {
+        //            if (params.ACTION == 'apply') {
+        //                sh "terraform apply -input=false tfplan"
+        //            } else if (params.ACTION == 'destroy') {
+        //                sh "terraform destroy -auto-approve"
+        //            }
+        //        }
+        //    }
+        //}
+
+        stage('Apply Terraform') {
             steps {
+                sh 'terraform apply -auto-approve'
                 script {
-                    if (params.ACTION == 'apply') {
-                        sh "terraform apply -input=false tfplan"
-                    } else if (params.ACTION == 'destroy') {
-                        sh "terraform destroy -auto-approve"
-                    }
+                    env.INSTANCE_IP = sh(script: "terraform output -raw instance_ip", returnStdout: true).trim()
                 }
+            }
+        }
+
+        stage('Configure with Ansible') {
+            steps {
+                writeFile(file: 'ansible_inventory', text: "[wordpress_servers]\n${env.INSTANCE_IP} ansible_user=ec2-user ansible_ssh_private_key_file=/root/rajendra/singapore-keypair.pem")
+                ansiblePlaybook(
+                    playbook: 'ansible/execute_python_script.yml',
+                    inventory: 'ansible_inventory'
+                )
             }
         }
     }
