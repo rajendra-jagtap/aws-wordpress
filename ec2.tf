@@ -2,7 +2,7 @@ resource "aws_instance" "wordpress" {
   ami           = var.ami_id
   instance_type = var.instance_type
   key_name      = var.key_name
-  subnet_id     = element(module.vpc.private_subnets, 0)
+  subnet_id     = element(module.vpc.public_subnets, 0)
 
   vpc_security_group_ids = [
     module.vpc.default_security_group_id
